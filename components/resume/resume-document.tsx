@@ -95,22 +95,37 @@ function SectionHeading({ id, children }: { id: string; children: ReactNode }) {
   return (
     <h2
       id={id}
-      className="mt-[17px] mb-[6px] border-b border-[#4a4a4a] pb-[2px] text-[14px] font-bold tracking-[0.02em] text-ink [font-variant:small-caps]"
+      className="mt-[13px] mb-[5px] border-b border-[#4a4a4a] pb-[1px] text-[16px] font-bold tracking-[0.02em] text-ink [font-variant:small-caps]"
     >
       {children}
     </h2>
   );
 }
 
-function Bullets({ bullets, version, blockAdded }: { bullets: Bullet[]; version: string | null; blockAdded: boolean }) {
+function Bullets({
+  bullets,
+  version,
+  blockAdded,
+  compact,
+}: {
+  bullets: Bullet[];
+  version: string | null;
+  blockAdded: boolean;
+  compact?: boolean;
+}) {
   const visible = bullets.filter((b) => visibleAt(b.addedOn, version));
   if (!visible.length) return null;
+  // Hollow-circle markers, tight itemsep (LaTeX \labelitemii + itemsep 1.25pt).
   return (
-    <ul className="mt-[3px] list-disc space-y-[2.5px] pl-[17px] marker:text-ink">
+    <ul
+      className={`list-[circle] space-y-[1.5px] pl-[16px] marker:text-ink ${
+        compact ? "mt-[1px]" : "mt-[2px]"
+      }`}
+    >
       {visible.map((b) => {
         const added = !blockAdded && addedIn(b.addedOn, version);
         return (
-          <li key={b.id} data-added={added ? "true" : undefined} className="pl-[2px]">
+          <li key={b.id} data-added={added ? "true" : undefined} className="pl-[3px]">
             <span className="resume-bullet-text">{renderInline(b.text, b.anchors, b.bold)}</span>
           </li>
         );
@@ -129,13 +144,13 @@ export function ResumeDocument() {
   const projects = r.projects.filter((p) => visibleAt(p.addedOn, version));
 
   return (
-    <div className="font-body text-[12.5px] leading-[1.34] text-ink">
+    <div className="font-body text-[13px] leading-[1.25] text-ink">
       {/* Header */}
       <header className="text-center">
-        <h1 className="text-[28px] font-medium tracking-[0.04em] text-ink [font-variant:small-caps]">
+        <h1 className="text-[31px] font-medium tracking-[0.03em] text-ink [font-variant:small-caps]">
           {r.header.name}
         </h1>
-        <p className="mt-[6px] flex flex-wrap items-center justify-center gap-x-[8px] gap-y-1 text-[12px] text-ink-sub">
+        <p className="mt-[5px] flex flex-wrap items-center justify-center gap-x-[8px] gap-y-1 text-[13px] text-ink-sub">
           <span>{r.header.location}</span>
           {r.header.contactChips.map((id) => (
             <Fragment key={id}>
@@ -155,24 +170,26 @@ export function ResumeDocument() {
           {education.map((e) => (
             <div key={e.id} data-added={addedIn(e.addedOn, version) ? "true" : undefined}>
               <div className="flex items-baseline justify-between gap-3">
-                <span className="text-[13px] font-bold">{e.school}</span>
-                <span className="shrink-0 text-[12px] font-bold text-ink">{e.dates}</span>
+                <span className="text-[14px] font-bold">{e.school}</span>
+                <span className="shrink-0 text-[13px] font-bold text-ink">{e.dates}</span>
               </div>
-              <div className="text-[12.5px] italic">{e.degree}</div>
+              <div className="text-[13px] italic">{e.degree}</div>
             </div>
           ))}
           {honors.length > 0 && (
-            <p className="mt-[3px] text-[12.5px]">
-              <span className="font-bold">Honors: </span>
-              {honors.map((h, i) => (
-                <Fragment key={h.id}>
-                  <span data-added={addedIn(h.addedOn, version) ? "true" : undefined}>
-                    {renderInline(h.text, h.anchors)}
-                  </span>
-                  {i < honors.length - 1 && <span>, </span>}
-                </Fragment>
-              ))}
-            </p>
+            <ul className="mt-[2px] list-[circle] pl-[16px] marker:text-ink">
+              <li className="pl-[3px]">
+                <span className="font-bold">Honors: </span>
+                {honors.map((h, i) => (
+                  <Fragment key={h.id}>
+                    <span data-added={addedIn(h.addedOn, version) ? "true" : undefined}>
+                      {renderInline(h.text, h.anchors)}
+                    </span>
+                    {i < honors.length - 1 && <span>, </span>}
+                  </Fragment>
+                ))}
+              </li>
+            </ul>
           )}
         </section>
       )}
@@ -184,17 +201,17 @@ export function ResumeDocument() {
           {experience.map((e) => {
             const blockAdded = addedIn(e.addedOn, version);
             return (
-              <div key={e.id} className="mt-[9px] first:mt-[2px]">
+              <div key={e.id} className="mt-[7px] first:mt-[1px]">
                 <div data-added={blockAdded ? "true" : undefined}>
                   <div className="flex items-baseline justify-between gap-3">
-                    <h3 id={`entry-${e.id}`} className="text-[13px] font-bold">
+                    <h3 id={`entry-${e.id}`} className="text-[14px] font-bold">
                       <EntryLink tab={e.tab}>{e.org}</EntryLink>
                     </h3>
-                    <span className="shrink-0 text-[12px] font-bold text-ink">{e.dates}</span>
+                    <span className="shrink-0 text-[13px] font-bold text-ink">{e.dates}</span>
                   </div>
                   <div className="flex items-baseline justify-between gap-3">
-                    <span className="text-[12.5px] italic">{e.role}</span>
-                    <span className="shrink-0 text-[12px] text-ink-sub">{e.location}</span>
+                    <span className="text-[13px] italic">{e.role}</span>
+                    <span className="shrink-0 text-[13px] text-ink-sub">{e.location}</span>
                   </div>
                 </div>
                 <Bullets bullets={e.bullets} version={version} blockAdded={blockAdded} />
@@ -211,7 +228,7 @@ export function ResumeDocument() {
           {projects.map((p) => {
             const blockAdded = addedIn(p.addedOn, version);
             return (
-              <div key={p.id} className="mt-[9px] first:mt-[2px]">
+              <div key={p.id} className="mt-[7px] first:mt-[1px]">
                 <div data-added={blockAdded ? "true" : undefined} className="flex items-baseline justify-between gap-3">
                   <h3 id={`entry-${p.id}`} className="min-w-0 text-[13px] leading-snug">
                     <EntryLink tab={p.tab}>
@@ -225,7 +242,7 @@ export function ResumeDocument() {
                     </div>
                   )}
                 </div>
-                <Bullets bullets={p.bullets} version={version} blockAdded={blockAdded} />
+                <Bullets bullets={p.bullets} version={version} blockAdded={blockAdded} compact />
               </div>
             );
           })}
@@ -235,9 +252,9 @@ export function ResumeDocument() {
       {/* Technical skills */}
       <section>
         <SectionHeading id="section-skills">{r.skillsHeading}</SectionHeading>
-        <div className="space-y-[3px]">
+        <div className="space-y-[2px]">
           {r.skills.map((g) => (
-            <p key={g.label} className="text-[12.5px]">
+            <p key={g.label} className="text-[13px]">
               <span className="font-bold">{g.label}: </span>
               {g.items.join(", ")}
             </p>

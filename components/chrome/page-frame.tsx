@@ -31,7 +31,7 @@ export function PageFrame({
           "print-page w-full bg-white text-ink animate-[fadeIn_160ms_ease-out]",
           pageless
             ? "max-w-[720px] px-1 py-2 sm:px-2"
-            : "min-h-[1056px] px-7 py-9 shadow-[var(--shadow-page)] max-w-[var(--page-w)] sm:px-12 md:px-[var(--page-pad-x)] md:py-[var(--page-pad-y)]",
+            : "min-h-[1056px] px-6 py-7 shadow-[var(--shadow-page)] max-w-[var(--page-w)] sm:px-8 md:px-[var(--page-pad-x)] md:py-[var(--page-pad-y)]",
           className,
         )}
       >

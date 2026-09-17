@@ -9,7 +9,7 @@ export function Ruler() {
   if (!view.ruler || view.pageless) return null;
 
   const inch = 96;
-  const marginIn = 84 / inch; // page padding in inches
+  const marginIn = 40 / inch; // page padding in inches (matches --page-pad-x)
   const ticks = Array.from({ length: 9 }, (_, i) => i);
 
   return (

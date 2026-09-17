@@ -60,10 +60,11 @@
     0 11px 15px -7px rgba(0, 0, 0, 0.2);
   --shadow-page: 0 0 0 1px rgba(60, 64, 67, 0.08), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
 
-  /* Page geometry (US Letter at 96dpi) */
+  /* Page geometry (US Letter at 96dpi). Side/top padding matches the LaTeX
+     résumé margins (~0.4in sides, ~0.42in top). */
   --page-w: 816px;
-  --page-pad-x: 84px;
-  --page-pad-y: 84px;
+  --page-pad-x: 40px;
+  --page-pad-y: 40px;
 }
 
 /* next/font sets --font-chrome-src / --font-body-src on <html>; the theme
