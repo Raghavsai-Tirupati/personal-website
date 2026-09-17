@@ -17,11 +17,6 @@ export const VIDEOS: Record<string, VideoDef> = {
     poster: "/videos/iris-poster.jpg",
     caption: "Iris narrating a live camera scene and reading text aloud.",
   },
-  matchbook: {
-    id: "matchbook",
-    caption: "Matchbook matching buy and sell orders over the API.",
-    todo: "Matchbook demo video file not supplied.",
-  },
   clinicalhours: {
     id: "clinicalhours",
     youtubeId: "s1hLXv7_OlQ",

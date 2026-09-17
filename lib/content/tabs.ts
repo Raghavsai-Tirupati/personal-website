@@ -166,7 +166,6 @@ const TABS_DEFS: TabDef[] = [
           "Matchbook is a Java and Spring Boot trading engine that matches buy and sell orders through backend APIs. It pairs a REST and WebSocket surface with PostgreSQL storage, packaged in Docker with CI.",
         ],
       },
-      { kind: "video", heading: "Demo", videoId: "matchbook" },
       {
         kind: "diagram",
         heading: "How it works",
