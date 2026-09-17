@@ -1,26 +1,254 @@
 @import "tailwindcss";
 
+/* ------------------------------------------------------------------ *
+ * Design tokens (verified against Google Docs Material 3 web UI).     *
+ * ------------------------------------------------------------------ */
+@theme {
+  --font-chrome: var(--font-chrome-src), "Google Sans", Roboto, Arial, sans-serif;
+  --font-body: var(--font-body-src), "Helvetica Neue", Arial, sans-serif;
+
+  /* Surfaces */
+  --color-canvas: #f9fbfd;
+  --color-chrome: #ffffff;
+  --color-pill: #edf2fa;
+  --color-pill-hover: #e2e9f3;
+  --color-pill-active: #d3e3fd;
+
+  /* Brand + accents */
+  --color-blue: #0b57d0;
+  --color-blue-hover: #0a4fbd;
+  --color-share: #c2e7ff;
+  --color-share-hover: #b0deff;
+  --color-share-ink: #062e6f;
+
+  /* Ink */
+  --color-ink: #1f1f1f;
+  --color-ink-sub: #444746;
+  --color-ink-mute: #5f6368;
+  --color-ink-faint: #80868b;
+
+  /* Lines */
+  --color-hairline: #c7c7c7;
+  --color-line: #e3e3e3;
+  --color-line-soft: #edeef0;
+
+  /* Comments */
+  --color-comment: #fddb6b; /* Docs anchored-comment yellow */
+  --color-comment-rest: #fdecc0;
+  --color-comment-active: #fbbc04;
+
+  /* Version-history suggestion / addition green */
+  --color-suggestion: #188038;
+  --color-suggestion-bg: #e6f4ea;
+
+  /* Interaction */
+  --color-hover: rgba(31, 31, 31, 0.059);
+  --color-hover-strong: rgba(31, 31, 31, 0.09);
+  --color-focus: #0b57d0;
+  --color-selection: #c8dbfa;
+
+  /* Radii */
+  --radius-pill: 9999px;
+  --radius-btn: 4px;
+  --radius-card: 8px;
+  --radius-menu: 8px;
+
+  /* Elevation */
+  --shadow-menu: 0 2px 6px 2px rgba(60, 64, 67, 0.15), 0 1px 2px rgba(60, 64, 67, 0.3);
+  --shadow-card: 0 1px 3px rgba(60, 64, 67, 0.16), 0 1px 2px rgba(60, 64, 67, 0.12);
+  --shadow-dialog: 0 24px 38px 3px rgba(0, 0, 0, 0.14), 0 9px 46px 8px rgba(0, 0, 0, 0.12),
+    0 11px 15px -7px rgba(0, 0, 0, 0.2);
+  --shadow-page: 0 0 0 1px rgba(60, 64, 67, 0.08), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+
+  /* Page geometry (US Letter at 96dpi) */
+  --page-w: 816px;
+  --page-pad-x: 84px;
+  --page-pad-y: 84px;
+}
+
+/* next/font sets --font-chrome-src / --font-body-src on <html>; the theme
+   font stacks above reference them. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100%;
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-chrome);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-selection);
+}
+
+/* Focus rings: visible, consistent, never covered. */
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* Thin Docs-style scrollbars on scroll surfaces. */
+.docs-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #bdc1c6 transparent;
+}
+.docs-scroll::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+.docs-scroll::-webkit-scrollbar-thumb {
+  background-color: #dadce0;
+  border: 3px solid transparent;
+  background-clip: content-box;
+  border-radius: 8px;
+}
+.docs-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: #bdc1c6;
+}
+
+/* ------------------------------------------------------------------ *
+ * Comment highlight on anchored résumé text.                          *
+ * ------------------------------------------------------------------ */
+.comment-anchor {
+  background: var(--color-comment-rest);
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background 120ms ease-out;
+}
+.comment-anchor:hover,
+.comment-anchor[data-hover="true"] {
+  background: var(--color-comment);
+}
+.comment-anchor[data-active="true"] {
+  background: var(--color-comment);
+  border-bottom-color: var(--color-comment-active);
+}
+
+/* ------------------------------------------------------------------ *
+ * Version-history additions (suggestion green).                       *
+ * ------------------------------------------------------------------ */
+[data-added="true"] {
+  background: var(--color-suggestion-bg);
+  box-shadow: -6px 0 0 var(--color-suggestion-bg), 6px 0 0 var(--color-suggestion-bg);
+  animation: addReveal 220ms ease-out;
+}
+@keyframes addReveal {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+[data-added="true"] .resume-bullet-text,
+[data-added="true"] > * {
+  color: var(--color-suggestion);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes sheetUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Version reveal animation (added rows expand in). */
+@keyframes rowReveal {
+  from {
+    grid-template-rows: 0fr;
+    opacity: 0;
+  }
+  to {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+}
+
+/* Find-in-document highlights (::highlight) live in a raw <style> in the root
+   layout, because the Tailwind/Lightning CSS parser drops the pseudo-element. */
+
+/* Native text-fragment highlight (Copy link to highlight). */
+::target-text {
+  background: var(--color-comment);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Print: output only the résumé page, one clean sheet.                *
+ * ------------------------------------------------------------------ */
+@media print {
+  @page {
+    size: letter;
+    margin: 0.45in;
+  }
+  body {
+    background: #fff;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-page {
+    position: static !important;
+    width: auto !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    /* Scale slightly so the résumé lands on a single clean sheet. */
+    zoom: 0.9;
+    animation: none !important;
+  }
+  .comment-anchor {
+    background: transparent !important;
+    border: none !important;
+  }
+  [data-added] {
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  [data-added] * {
+    color: inherit !important;
+  }
 }
