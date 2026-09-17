@@ -17,7 +17,7 @@ export const RESUME: ResumeContent = {
       id: "tamu",
       school: "Texas A&M University",
       degree: "Bachelor of Science in Computer Science + Biomedical Sciences",
-      dates: "Expected May 2029",
+      dates: "Expected May 2028",
       addedOn: "2025-08-18",
     },
   ],
