@@ -44,6 +44,7 @@ export type Bullet = {
   text: string;
   addedOn: string; // ISO date this line first appeared (version history)
   anchors?: Anchor[];
+  bold?: string[]; // phrases to render bold, matching the LaTeX \textbf{...}
 };
 
 export type EducationEntry = {

@@ -29,33 +29,66 @@ function EntryLink({ tab, children }: { tab?: TabId; children: ReactNode }) {
   );
 }
 
-// Split a bullet's text on its anchor phrases, wrapping each in a CommentAnchor.
-function renderInline(text: string, anchors: Anchor[] = []): ReactNode {
-  if (!anchors.length) return text;
+// Wrap each bold phrase in <strong>, matching the LaTeX \textbf{...}.
+function boldify(text: string, bold: string[] = []): ReactNode {
+  if (!bold.length) return text;
   let nodes: ReactNode[] = [text];
-  for (const a of anchors) {
+  for (const phrase of bold) {
     const out: ReactNode[] = [];
     for (const n of nodes) {
       if (typeof n !== "string") {
         out.push(n);
         continue;
       }
-      const i = n.indexOf(a.phrase);
+      const i = n.indexOf(phrase);
       if (i < 0) {
         out.push(n);
         continue;
       }
       if (i > 0) out.push(n.slice(0, i));
-      out.push(
-        <CommentAnchor key={a.commentId} commentId={a.commentId}>
-          {a.phrase}
-        </CommentAnchor>,
-      );
-      out.push(n.slice(i + a.phrase.length));
+      out.push(<strong className="font-bold">{phrase}</strong>);
+      const rest = n.slice(i + phrase.length);
+      if (rest) out.push(rest);
     }
     nodes = out;
   }
   return nodes.map((n, i) => <Fragment key={i}>{n}</Fragment>);
+}
+
+// Split a bullet on its anchor phrases (wrapping each in a CommentAnchor), then
+// apply bold within every piece so bolds nested inside an anchor still render.
+function renderInline(text: string, anchors: Anchor[] = [], bold: string[] = []): ReactNode {
+  type Piece = { type: "text" | "anchor"; text: string; commentId?: string };
+  let pieces: Piece[] = [{ type: "text", text }];
+  for (const a of anchors) {
+    const out: Piece[] = [];
+    for (const pc of pieces) {
+      if (pc.type !== "text") {
+        out.push(pc);
+        continue;
+      }
+      const i = pc.text.indexOf(a.phrase);
+      if (i < 0) {
+        out.push(pc);
+        continue;
+      }
+      if (i > 0) out.push({ type: "text", text: pc.text.slice(0, i) });
+      out.push({ type: "anchor", text: a.phrase, commentId: a.commentId });
+      const rest = pc.text.slice(i + a.phrase.length);
+      if (rest) out.push({ type: "text", text: rest });
+    }
+    pieces = out;
+  }
+  return pieces.map((pc, idx) => {
+    const inner = boldify(pc.text, bold);
+    return pc.type === "anchor" ? (
+      <CommentAnchor key={idx} commentId={pc.commentId!}>
+        {inner}
+      </CommentAnchor>
+    ) : (
+      <Fragment key={idx}>{inner}</Fragment>
+    );
+  });
 }
 
 function SectionHeading({ id, children }: { id: string; children: ReactNode }) {
@@ -78,7 +111,7 @@ function Bullets({ bullets, version, blockAdded }: { bullets: Bullet[]; version:
         const added = !blockAdded && addedIn(b.addedOn, version);
         return (
           <li key={b.id} data-added={added ? "true" : undefined} className="pl-[2px]">
-            <span className="resume-bullet-text">{renderInline(b.text, b.anchors)}</span>
+            <span className="resume-bullet-text">{renderInline(b.text, b.anchors, b.bold)}</span>
           </li>
         );
       })}
